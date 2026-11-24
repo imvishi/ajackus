@@ -36,7 +36,7 @@ gem "image_processing", "~> 1.2"
 # gem "rack-cors"
 
 gem "rails_event_store", "~> 3.2.0"
-gem "clerk-sdk-ruby", "~> 9.0", require: "clerk"
+gem "clerk-sdk-ruby", "~> 9.0", require: false # enable (require: "clerk") once CLERK_SECRET_KEY is set
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -51,3 +51,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
+
+gem "dotenv", "~> 3.2", groups: [:development, :test]
+
+gem "jsonapi-serializer", "~> 2.2"
+
+gem "kaminari", "~> 1.3"
