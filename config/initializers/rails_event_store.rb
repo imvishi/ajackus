@@ -19,6 +19,8 @@ Rails.configuration.to_prepare do
     # store.subscribe(lambda { |event| SendOrderConfirmation.new.call(event) }, to: [OrderSubmitted])
     # store.subscribe_to_all_events(lambda { |event| Rails.logger.info(event.event_type) })
 
+    Voting.subscriptions.each { |handler, facts| store.subscribe(handler, to: facts) }
+
     store.subscribe_to_all_events(RailsEventStore::LinkByEventType.new)
     store.subscribe_to_all_events(RailsEventStore::LinkByCorrelationId.new)
     store.subscribe_to_all_events(RailsEventStore::LinkByCausationId.new)
@@ -29,4 +31,5 @@ Rails.configuration.to_prepare do
   #   bus.register(PrintInvoice, Invoicing::OnPrint.new)
   #   bus.register(SubmitOrder, ->(cmd) { Ordering::OnSubmitOrder.new.call(cmd) })
   # end
+  Voting.register_commands(Rails.configuration.command_bus, Rails.configuration.event_store)
 end

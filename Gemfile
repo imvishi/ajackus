@@ -36,7 +36,7 @@ gem "image_processing", "~> 1.2"
 # gem "rack-cors"
 
 gem "rails_event_store", "~> 3.2.0"
-gem "clerk-sdk-ruby", "~> 9.0", require: false # enable (require: "clerk") once CLERK_SECRET_KEY is set
+gem "clerk-sdk-ruby", "~> 9.0", require: "clerk"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
