@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  include Clerk::Authenticatable
+
   rescue_from ActiveRecord::RecordNotFound do |error|
     render json: { error: "#{error.model || 'Record'} not found" }, status: :not_found
   end
@@ -14,12 +16,15 @@ class ApplicationController < ActionController::API
     Rails.configuration.command_bus
   end
 
-  # Temporary: the user id comes from the X-User-Id header until Clerk auth is added.
+  # Clerk user id of the signed-in user (e.g. "user_2abc..."), or nil.
   def current_user_id
-    request.headers["X-User-Id"].presence
+    clerk&.user_id
   end
 
+  # Valid token AND the session hasn't been signed out.
   def require_user!
-    render json: { error: "X-User-Id header is required" }, status: :unauthorized unless current_user_id
+    return if clerk&.user? && ClerkAuth::ActiveSession.new(session_id: clerk.session["sid"]).call
+
+    render json: { error: "You must be signed in" }, status: :unauthorized
   end
 end
