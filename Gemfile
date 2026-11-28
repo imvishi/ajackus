@@ -54,7 +54,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
-gem "dotenv", "~> 3.2", groups: [:development, :test]
+gem "dotenv", "~> 3.2", groups: [ :development, :test ]
 
 gem "jsonapi-serializer", "~> 2.2"
 

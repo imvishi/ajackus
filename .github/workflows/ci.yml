@@ -50,3 +50,40 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      RAILS_ENV: test
+      # No database name: Rails uses ajakus_test from database.yml
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+      # Clerk and Billetto are faked in specs; these only let the app boot
+      CLERK_SECRET_KEY: sk_test_dummy
+      CLERK_PUBLISHABLE_KEY: pk_test_dummy
+      BILLETTO_API_KEYPAIR: key:secret
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Prepare database
+        run: bin/rails db:prepare
+
+      - name: Run specs
+        run: bundle exec rspec
