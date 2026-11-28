@@ -39,6 +39,8 @@ gem "rails_event_store", "~> 3.2.0"
 gem "clerk-sdk-ruby", "~> 9.0", require: "clerk"
 
 group :development, :test do
+  gem "rspec-rails", "~> 8.0"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

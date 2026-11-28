@@ -24,7 +24,7 @@ services:
       - path: .env
         required: false
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/ajakus_development
+      DATABASE_URL: postgres://postgres:postgres@db:5432
     ports:
       - "${PORT:-3000}:3000"
     depends_on:

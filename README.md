@@ -17,7 +17,27 @@ bin/rails db:prepare
 bin/rails server
 ```
 
-Then load events: `curl -X POST http://localhost:3000/events/sync`
+Then sign in and load events (sync requires a signed-in user):
+
+```bash
+curl -X POST http://localhost:3000/events/sync -H "Authorization: Bearer <token>"
+```
+
+## Tests
+
+Run the RSpec suite locally:
+
+```bash
+bundle exec rspec
+```
+
+Or with Docker Compose:
+
+```bash
+docker compose run --rm -e RAILS_ENV=test web bash -c "bin/rails db:prepare && bundle exec rspec"
+```
+
+The code is copied into the image, so after changing code run `docker compose build` first.
 
 ## API
 
@@ -26,7 +46,7 @@ Then load events: `curl -X POST http://localhost:3000/events/sync`
 | POST | `/auth/sign_up` | | `{ "email", "password" }` |
 | POST | `/auth/sign_in` | | `{ "email", "password" }` → returns `token` |
 | POST | `/auth/sign_out` | Bearer token | |
-| POST | `/events/sync` | | |
+| POST | `/events/sync` | Bearer token | |
 | GET | `/events?page=1&per_page=20` | | |
 | GET | `/events/:id` | | |
 | POST | `/events/:event_id/vote` | Bearer token | `{ "value": "up" }` or `{ "value": "down" }` |
@@ -52,7 +72,18 @@ Controller → Command → Command Bus → Command Handler → EventVote Aggrega
 - Each user counts once per event; only their latest vote counts.
 - Every vote event stores the Clerk user id; there is no local users table.
 - API only: no UI was added due to time constraints (test it with Postman or curl).
-- Automated test cases are not added yet.
+
+## Trade-offs
+
+**Sign-in goes through this API, not Clerk's sign-in page.**
+
+Normally the user signs in on Clerk's own sign-in page, and the backend only receives a token. This project has no frontend, so there is no page to show. Instead, the user sends their email and password to `/auth/sign_in`, the API checks them with Clerk and returns the token.
+
+Downsides:
+- The API sees users' passwords.
+- Clerk's extra protections are skipped, such as bot blocking, two-factor login and email confirmation.
+
+With a frontend, we would use Clerk's sign-in page and remove `/auth/sign_up` and `/auth/sign_in`. Nothing else would change.
 
 ## AI usage
 
