@@ -1,4 +1,6 @@
 class EventsController < ApplicationController
+  before_action :require_user!, only: :sync
+
   rescue_from Billetto::Error do |error|
     render json: { error: error.message }, status: :bad_gateway
   end
@@ -15,7 +17,7 @@ class EventsController < ApplicationController
     render json: EventSerializer.new(Event.find(params[:id])).serializable_hash
   end
 
-  # POST /events/sync
+  # POST /events/sync   header: Authorization: Bearer <token>
   def sync
     render json: { synced: Events::SyncFromBilletto.new.call }
   end

@@ -10,6 +10,11 @@ class ApplicationController < ActionController::API
     render json: { error: error.model.errors.full_messages.to_sentence }, status: :unprocessable_entity
   end
 
+  # Two requests changed the same vote at once (e.g. a double click); the later one loses.
+  rescue_from RubyEventStore::WrongExpectedEventVersion do
+    render json: { error: "Your vote changed at the same time, please try again" }, status: :conflict
+  end
+
   private
 
   def command_bus
