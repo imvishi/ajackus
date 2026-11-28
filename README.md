@@ -9,7 +9,7 @@ cp .env.example .env   # add your Billetto key pair and Clerk test keys
 docker compose up --build
 ```
 
-Without Docker (Ruby 3.4.7 + PostgreSQL):
+Without Docker (Ruby 3.4.13 + PostgreSQL):
 
 ```bash
 bundle install
